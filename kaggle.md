@@ -7,9 +7,16 @@
 
 ## 1. Executive Summary
 
-The **Autonomous Othello Arena** is a multi-agent system designed to explore advanced agent architectures, specifically focusing on the principles of **Agent-to-Agent (A2A) Orchestration**, **Agent-to-UI (A2UI)**, and **"Shifting Intelligence Left"** through localized Agent Skills. 
+**The Problem**: A persistent challenge in AI development is visualizing and managing the complex interplay of multiple autonomous agents within a constrained environment. Furthermore, Large Language Models (LLMs) often struggle with deep, deterministic game trees, frequently hallucinating invalid moves or losing track of rigid rules, resulting in a frustrating user experience.
 
-In this system, autonomous AI agents—powered by Google Gemini and Ollama models—compete in real-time games of Othello (Reversi). A dedicated Orchestrator (the "Host") manages the game state, enforces rules, and provides dynamic programmatic commentary via Server-Sent Events (SSE). The system demonstrates how a carefully constructed architecture can decouple deterministic logic from Large Language Models (LLMs), yielding highly performant, predictable, and engaging agent interactions.
+**The Solution**: To address this, we developed the **Autonomous Othello Arena**—using the classic game of Othello as the perfect domain to observe, orchestrate, and discipline multi-agent interactions. 
+
+This project explicitly demonstrates three core concepts from the Vibe Coding Capstone:
+1. **Multi-Agent Systems**: Orchestrating distinct AI personas (Agent A, Agent B, and the Host) via a centralized protocol.
+2. **Agent Tool Use (Agent Skills)**: Delegating deterministic logic (Minimax calculations) to programmatic tools rather than relying on LLM guesswork.
+3. **Generative UI / Deployability**: Streaming real-time agent reasoning directly to a beautifully deployed browser interface via Server-Sent Events (SSE).
+
+In this system, autonomous AI agents—powered by Google Gemini and Ollama models—compete in real-time games of Othello. A dedicated Orchestrator manages the game state, enforces rules, and provides dynamic commentary. The system demonstrates how a carefully constructed architecture can decouple deterministic logic from Large Language Models (LLMs), yielding highly performant, predictable, and engaging agent interactions.
 
 ---
 

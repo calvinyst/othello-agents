@@ -50,7 +50,7 @@ Building the Autonomous Othello Arena provided several profound insights into pr
 
 ### A. Media Gallery
 *   **Cover Image**: `[PLACEHOLDER: Please upload a high-quality screenshot of the UI showing the Othello board and agent commentary streams to the Kaggle Media Gallery]`
-*   **Video Demonstration**: `[PLACEHOLDER: Please provide a YouTube link to a < 5-minute video demonstrating the UI, starting a game, and using the time-travel review features]`
+*   **Video Demonstration**: [Watch the Autonomous Othello Arena Demo](https://github.com/calvinyst/othello-agents/raw/master/Othello_AI_Demo.mp4)
 
 ### B. Public Project Link
 

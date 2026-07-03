@@ -49,7 +49,7 @@ Building the Autonomous Othello Arena provided several profound insights into pr
 ## 4. Required Assets
 
 ### A. Media Gallery
-*   **Cover Image**: `[PLACEHOLDER: Please upload a high-quality screenshot of the UI showing the Othello board and agent commentary streams to the Kaggle Media Gallery]`
+*   **Cover Image**: ![Autonomous Othello Arena UI](https://github.com/calvinyst/othello-agents/raw/master/cover_image.png)
 *   **Video Demonstration**: [Watch the Autonomous Othello Arena Demo](https://github.com/calvinyst/othello-agents/raw/master/Othello_AI_Demo.mp4)
 
 ### B. Public Project Link

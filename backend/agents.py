@@ -86,6 +86,9 @@ I have used my Othello calculation skill to determine the best move is ({best_mo
 
 Explain your strategy for making this move in MAXIMUM 1 SENTENCE. 
 Be confident that this is the best move. Do not mention that a script calculated it.
+CRITICAL RULES:
+1. You MUST speak ONLY in English. No other languages are permitted.
+2. You MUST ONLY discuss the Othello game and strategy. Do NOT discuss unrelated topics.
 
 Example Response:
 My strategy is to take the corner to secure my pieces and restrict the opponent's options."""
@@ -132,7 +135,10 @@ async def generate_host_commentary(game_engine, move, reasoning_a, reasoning_b, 
 Current Board:
 {board_str}
 
-Provide a short, entertaining commentary (max 3 sentences) on this move. Be energetic!"""
+Provide a short, entertaining commentary (max 3 sentences) on this move. Be energetic!
+CRITICAL RULES:
+1. You MUST speak ONLY in English.
+2. You MUST ONLY discuss the Othello game. Do NOT hallucinate unrelated topics."""
         
         try:
             model = genai.GenerativeModel('gemini-1.5-flash')
@@ -161,7 +167,10 @@ Final Board:
 {board_str}
 
 Critique your gameplay in 1 short sentence. Then, provide exactly ONE "Lesson Learned" that will help you in future games.
-Format the lesson exactly as: LESSON[your lesson here]"""
+Format the lesson exactly as: LESSON[your lesson here]
+CRITICAL RULES:
+1. You MUST speak ONLY in English.
+2. You MUST ONLY discuss the Othello game and your strategy."""
 
     try:
         response = ollama.chat(model=MODEL_NAME, messages=[{"role": "user", "content": prompt}], stream=True)

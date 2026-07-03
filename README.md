@@ -53,7 +53,7 @@ We solve the "Communication Gap" by mapping the internal JSON state of the orche
    python -m venv venv
    # Windows: venv\Scripts\activate
    # Mac/Linux: source venv/bin/activate
-   pip install fastapi uvicorn sse-starlette ollama google-generativeai python-dotenv
+   pip install -r requirements.txt
    ```
 3. Run the server:
    ```bash
@@ -65,8 +65,8 @@ We solve the "Communication Gap" by mapping the internal JSON state of the orche
 2. Navigate to the `frontend/` directory.
 3. Start a simple web server:
    ```bash
-   python -m http.server 8000
+   python -m http.server 8080
    ```
-4. Open your browser and go to `http://localhost:8000`.
+4. Open your browser and go to `http://localhost:8080`.
 
 *Enjoy the game!*

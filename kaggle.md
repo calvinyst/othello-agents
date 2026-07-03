@@ -50,7 +50,7 @@ Building the Autonomous Othello Arena provided several profound insights into pr
 
 ### A. Media Gallery
 *   **Cover Image**: ![Autonomous Othello Arena UI](https://github.com/calvinyst/othello-agents/raw/master/cover_image.png)
-*   **Video Demonstration**: [Watch the Autonomous Othello Arena Demo](https://github.com/calvinyst/othello-agents/raw/master/Othello_AI_Demo.mp4)
+*   **Video Demonstration**: [Watch the Autonomous Othello Arena Demo](https://youtu.be/yPpt-kA0Xdk)
 
 ### B. Public Project Link
 

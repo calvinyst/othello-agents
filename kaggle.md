@@ -16,7 +16,7 @@ This project explicitly demonstrates three core concepts from the Vibe Coding Ca
 2. **Agent Tool Use (Agent Skills)**: Delegating deterministic logic (Minimax calculations) to programmatic tools rather than relying on LLM guesswork.
 3. **Generative UI / Deployability**: Streaming real-time agent reasoning directly to a beautifully deployed browser interface via Server-Sent Events (SSE).
 
-In this system, autonomous AI agents—powered by Google Gemini—compete in real-time games of Othello. A dedicated Orchestrator manages the game state, enforces rules, and provides dynamic commentary. The system demonstrates how a carefully constructed architecture can decouple deterministic logic from Large Language Models (LLMs), yielding highly performant, predictable, and engaging agent interactions.
+In this system, autonomous AI agents—powered by Google Gemini and Ollama models—compete in real-time games of Othello. A dedicated Orchestrator manages the game state, enforces rules, and provides dynamic commentary. The system demonstrates how a carefully constructed architecture can decouple deterministic logic from Large Language Models (LLMs), yielding highly performant, predictable, and engaging agent interactions.
 
 ---
 

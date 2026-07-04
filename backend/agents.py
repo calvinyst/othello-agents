@@ -4,6 +4,7 @@ import os
 import re
 from dotenv import load_dotenv
 import google.generativeai as genai
+import ollama
 from game_engine import OthelloGame
 import database
 
@@ -11,10 +12,17 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
-else:
-    raise ValueError("GEMINI_API_KEY environment variable not set")
 
-MODEL_NAME = "gemini-1.5-flash"
+GEMINI_MODEL_NAME = "gemini-1.5-flash"
+OLLAMA_MODEL_NAME = "phi3"
+
+if not GEMINI_API_KEY:
+    try:
+        ollama.show(OLLAMA_MODEL_NAME)
+    except ollama.ResponseError as e:
+        if e.status_code == 404:
+            print(f"Pulling {OLLAMA_MODEL_NAME} for Ollama...")
+            ollama.pull(OLLAMA_MODEL_NAME)
 
 def sanitize_context(text: str) -> str:
     """
@@ -107,20 +115,31 @@ Example Response:
 My strategy is to take the corner to secure my pieces and restrict the opponent's options."""
 
     try:
-        model = genai.GenerativeModel(MODEL_NAME)
-        response = model.generate_content(prompt, stream=True)
-        full_reasoning = ""
-        for chunk in response:
-            if chunk.text:
-                full_reasoning += chunk.text
-                notify_callback(game_id, f"reasoning_{agent_id}", {"delta": chunk.text, "move_number": move_number})
+        if GEMINI_API_KEY:
+            model = genai.GenerativeModel(GEMINI_MODEL_NAME)
+            response = model.generate_content(prompt, stream=True)
+            full_reasoning = ""
+            for chunk in response:
+                if chunk.text:
+                    full_reasoning += chunk.text
+                    notify_callback(game_id, f"reasoning_{agent_id}", {"delta": chunk.text, "move_number": move_number})
+                    await asyncio.sleep(0) # Yield control
+                
+            return best_move, full_reasoning
+        else:
+            response = ollama.chat(model=OLLAMA_MODEL_NAME, messages=[{"role": "user", "content": prompt}], stream=True)
+            full_reasoning = ""
+            for chunk in response:
+                content = chunk['message']['content']
+                full_reasoning += content
+                notify_callback(game_id, f"reasoning_{agent_id}", {"delta": content, "move_number": move_number})
                 await asyncio.sleep(0) # Yield control
-            
-        return best_move, full_reasoning
+                
+            return best_move, full_reasoning
         
     except Exception as e:
-        print(f"Gemini error: {e}")
-        return best_move, f"Error calling Gemini: {e}"
+        print(f"AI Generation error: {e}")
+        return best_move, f"Error calling AI: {e}"
 
 
 async def generate_host_commentary(game_engine, move, reasoning_a, reasoning_b, game_id, move_number, notify_callback, use_llm=False):
@@ -187,13 +206,22 @@ CRITICAL RULES:
 2. You MUST ONLY discuss the Othello game and your strategy."""
 
     try:
-        model = genai.GenerativeModel(MODEL_NAME)
-        response = model.generate_content(prompt, stream=True)
-        full_reasoning = ""
-        for chunk in response:
-            if chunk.text:
-                full_reasoning += chunk.text
-                notify_callback(game_id, f"conclusion_{agent_id}", {"delta": chunk.text})
+        if GEMINI_API_KEY:
+            model = genai.GenerativeModel(GEMINI_MODEL_NAME)
+            response = model.generate_content(prompt, stream=True)
+            full_reasoning = ""
+            for chunk in response:
+                if chunk.text:
+                    full_reasoning += chunk.text
+                    notify_callback(game_id, f"conclusion_{agent_id}", {"delta": chunk.text})
+                    await asyncio.sleep(0)
+        else:
+            response = ollama.chat(model=OLLAMA_MODEL_NAME, messages=[{"role": "user", "content": prompt}], stream=True)
+            full_reasoning = ""
+            for chunk in response:
+                content = chunk['message']['content']
+                full_reasoning += content
+                notify_callback(game_id, f"conclusion_{agent_id}", {"delta": content})
                 await asyncio.sleep(0)
             
         # Parse lesson and save to DB
@@ -204,4 +232,4 @@ CRITICAL RULES:
             database.add_lesson(agent_id, lesson)
             
     except Exception as e:
-        print(f"Gemini conclusion error: {e}")
+        print(f"AI conclusion error: {e}")

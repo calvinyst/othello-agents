@@ -60,3 +60,11 @@ Want to analyze a crucial turning point in the match? Below the main board, you 
 
 ### 3. Persistent History
 Every move, thought, and board state is stored in a lightweight SQLite file database. This means your game records are fully preserved between sessions.
+
+---
+
+## 🛡️ Enterprise-Grade Agent Security
+
+The Autonomous Othello Arena is built not just for entertainment, but as a robust demonstration of Secure Agentic Engineering.
+- **Context Hygiene**: The memories the agents draw from are strictly sanitized behind the scenes to prevent malicious prompt injections.
+- **Sandboxed Execution**: When agents compute moves, the engine utilizes "Zero Ambient Authority", mathematically rejecting illegal actions and confining the agent's logic to a restricted runtime environment.

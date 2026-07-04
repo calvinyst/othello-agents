@@ -23,6 +23,16 @@ except ollama.ResponseError as e:
         print(f"Pulling {MODEL_NAME} for Ollama...")
         ollama.pull(MODEL_NAME)
 
+def sanitize_context(text: str) -> str:
+    """
+    Context Hygiene: Sanitize DB memory strings to prevent prompt injection
+    and context hallucination.
+    """
+    if not text:
+        return ""
+    # Remove obvious instruction-overriding attempts
+    sanitized = re.sub(r'(?i)(ignore previous|system prompt|new rules|forget all|you must now)', '[SANITIZED]', text)
+    return sanitized
 
 def board_to_string(board):
     res = "  0 1 2 3 4 5 6 7\n"
@@ -54,10 +64,19 @@ async def generate_ollama_move(game_engine, player, game_id, move_number, notify
     try:
         board_json = json.dumps(game_engine.board)
         script_path = os.path.join(os.path.dirname(__file__), "..", "skills", "calculate-othello-move", "scripts", "minimax_engine.py")
+        
+        # Zero Ambient Authority: Downscope the subprocess environment
+        safe_env = {
+            "PATH": os.environ.get("PATH", ""),
+            "SYSTEMROOT": os.environ.get("SYSTEMROOT", ""),
+            "PYTHONPATH": os.environ.get("PYTHONPATH", "")
+        }
+        
         process = await asyncio.create_subprocess_exec(
             sys.executable, script_path, board_json, str(player),
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+            stderr=asyncio.subprocess.PIPE,
+            env=safe_env
         )
         stdout, stderr = await process.communicate()
         move_data = json.loads(stdout.decode().strip())
@@ -76,7 +95,8 @@ async def generate_ollama_move(game_engine, player, game_id, move_number, notify
     lessons = database.get_lessons(agent_id, limit=memory_limit)
     memory_context = ""
     if lessons:
-        memory_context = "Lessons from your past games:\n- " + "\n- ".join(lessons) + "\n\n"
+        sanitized_lessons = [sanitize_context(l) for l in lessons]
+        memory_context = "Lessons from your past games:\n- " + "\n- ".join(sanitized_lessons) + "\n\n"
         
     prompt = f"""You are an AI playing Othello as {player_str}.
 {memory_context}Current Board:

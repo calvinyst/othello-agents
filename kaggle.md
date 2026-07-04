@@ -52,7 +52,19 @@ Building the Autonomous Othello Arena provided several profound insights into pr
 
 ---
 
-## 4. Required Assets
+## 4. Agent Security & Evaluation
+
+To adhere to the rigorous standards of modern enterprise vibe coding, this project implements a defense-in-depth architecture spanning several core security pillars:
+
+*   **Supply Chain Defense (Pillar 4)**: Dependencies are strictly cryptographically pinned in `requirements.txt` to prevent automated agents from succumbing to "slopsquatting" or hallucinated package vulnerabilities during CI/CD pipelines.
+*   **Context Hygiene & Prompt Sanitization**: The agent's memory banks dynamically strip prompt-injection attempts (e.g., "ignore previous instructions") before runtime. This mitigates Context Hallucinations and prevents an adversarial user from hijacking the underlying LLM.
+*   **Zero Ambient Authority (Pillar 5)**: When the backend invokes the localized Agent Skill (`minimax_engine.py`), the subprocess is launched within a hyper-restricted environment. It is explicitly denied ambient access to the parent's environment variables, fulfilling the principle of Least Privilege.
+*   **Decoupled Tooling as a Policy Server**: The `game_engine.py` acts as a Structural Policy Server. It mathematically governs Agent-to-Agent interactions and rejects illegal tool calls (invalid moves), ensuring the LLM is physically incapable of corrupting the core application state.
+*   **Automated Functional Evaluation**: A deterministic `pytest` suite continuously evaluates the underlying Minimax tool execution logic, acting as an automated baseline check for the agent's core capabilities.
+
+---
+
+## 5. Required Assets
 
 ### A. Media Gallery
 *   **Cover Image**: ![Autonomous Othello Arena UI](https://github.com/calvinyst/othello-agents/raw/master/cover_image.png)

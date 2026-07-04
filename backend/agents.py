@@ -4,7 +4,6 @@ import os
 import re
 from dotenv import load_dotenv
 import google.generativeai as genai
-import ollama
 from game_engine import OthelloGame
 import database
 
@@ -12,16 +11,10 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
+else:
+    raise ValueError("GEMINI_API_KEY environment variable not set")
 
-MODEL_NAME = "phi3" # Small, fast local model
-
-# We'll pull the model once if not available
-try:
-    ollama.show(MODEL_NAME)
-except ollama.ResponseError as e:
-    if e.status_code == 404:
-        print(f"Pulling {MODEL_NAME} for Ollama...")
-        ollama.pull(MODEL_NAME)
+MODEL_NAME = "gemini-1.5-flash"
 
 def sanitize_context(text: str) -> str:
     """
@@ -114,19 +107,20 @@ Example Response:
 My strategy is to take the corner to secure my pieces and restrict the opponent's options."""
 
     try:
-        response = ollama.chat(model=MODEL_NAME, messages=[{"role": "user", "content": prompt}], stream=True)
+        model = genai.GenerativeModel(MODEL_NAME)
+        response = model.generate_content(prompt, stream=True)
         full_reasoning = ""
         for chunk in response:
-            content = chunk['message']['content']
-            full_reasoning += content
-            notify_callback(game_id, f"reasoning_{agent_id}", {"delta": content, "move_number": move_number})
-            await asyncio.sleep(0) # Yield control
+            if chunk.text:
+                full_reasoning += chunk.text
+                notify_callback(game_id, f"reasoning_{agent_id}", {"delta": chunk.text, "move_number": move_number})
+                await asyncio.sleep(0) # Yield control
             
         return best_move, full_reasoning
         
     except Exception as e:
-        print(f"Ollama error: {e}")
-        return best_move, f"Error calling Ollama: {e}"
+        print(f"Gemini error: {e}")
+        return best_move, f"Error calling Gemini: {e}"
 
 
 async def generate_host_commentary(game_engine, move, reasoning_a, reasoning_b, game_id, move_number, notify_callback, use_llm=False):
@@ -193,13 +187,14 @@ CRITICAL RULES:
 2. You MUST ONLY discuss the Othello game and your strategy."""
 
     try:
-        response = ollama.chat(model=MODEL_NAME, messages=[{"role": "user", "content": prompt}], stream=True)
+        model = genai.GenerativeModel(MODEL_NAME)
+        response = model.generate_content(prompt, stream=True)
         full_reasoning = ""
         for chunk in response:
-            content = chunk['message']['content']
-            full_reasoning += content
-            notify_callback(game_id, f"conclusion_{agent_id}", {"delta": content})
-            await asyncio.sleep(0)
+            if chunk.text:
+                full_reasoning += chunk.text
+                notify_callback(game_id, f"conclusion_{agent_id}", {"delta": chunk.text})
+                await asyncio.sleep(0)
             
         # Parse lesson and save to DB
         import re
@@ -209,4 +204,4 @@ CRITICAL RULES:
             database.add_lesson(agent_id, lesson)
             
     except Exception as e:
-        print(f"Ollama conclusion error: {e}")
+        print(f"Gemini conclusion error: {e}")

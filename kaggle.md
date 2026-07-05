@@ -1,5 +1,5 @@
 # Autonomous Othello Arena: A Multi-Agent System Ecosystem
-**Subtitle**: Shifting Intelligence Left in Agent Architectures for Real-Time Competitive Gaming
+**Subtitle**: Enabling User Observation of the Gameplay Thought Processes of Agents.
 
 **Track Selection**: Freestyle Track
 
@@ -7,9 +7,9 @@
 
 ## 1. Problem Definition & Value
 
-**The Problem**: A persistent challenge in AI development is visualizing and managing the complex interplay of multiple autonomous agents within a constrained environment. Furthermore, Large Language Models (LLMs) often struggle with deep, deterministic game trees, frequently hallucinating invalid moves or losing track of rigid rules, resulting in a frustrating user experience.
+**The Problem**: Learners of strategy board games when observing others playing see moves being made but are not necessarily able to understand the rationales for the moves.  Having a way to transparently see these could accelerate their journeys to become better players.
 
-**The Solution**: To address this, we developed the **Autonomous Othello Arena**—using the classic game of Othello as the perfect domain to observe, orchestrate, and discipline multi-agent interactions. 
+**The Solution**: To address this, I developed the **Autonomous Othello Arena**— using the classic game of Othello as a relatively constrained strategy game domain, the user is enabled to transparently see the thought processes of agentic game players (playing against each other or with the user) throughout the game, as well as their reflections post-game.
 
 This project explicitly demonstrates three core concepts from the Vibe Coding Capstone:
 1. **Multi-Agent Systems**: Orchestrating distinct AI personas (Agent A, Agent B, and the Host) via a centralized protocol.
@@ -29,7 +29,7 @@ The foundation of the arena relies on a robust orchestration layer. Rather than 
 *   **The Host Agent**: A third observer agent acts as the referee and color-commentator, ensuring that the A2A interactions are seamlessly translated into a digestible format.
 
 ### B. Shifting Intelligence Left: The Agent Skills Pattern
-A critical failing in early agent design is relying on LLMs for deterministic calculations (e.g., asking an LLM to "calculate the best Minimax move"). We implemented the **"Shift Intelligence Left"** methodology to solve this.
+A critical failing in early agent design is relying on LLMs for deterministic calculations (e.g., asking an LLM to "calculate the best Minimax move"). I implemented the **"Shift Intelligence Left"** methodology to solve this.
 *   **Agent Skills**: The system includes a standard `calculate-othello-move` Agent Skill. This skill contains a `SKILL.md` instruction file and a `minimax_engine.py` deterministic script.
 *   **Tool Execution**: When an agent must make a move, the LLM is bypassed for the computational heavy lifting. Instead, the backend invokes the localized Python script asynchronously (`asyncio.create_subprocess_exec`) to calculate the mathematically optimal move.
 *   **The Role of the LLM**: Freed from playing the game poorly, the LLM is instead fed the optimal move and asked to generate high-quality, strategic reasoning and color commentary about *why* the move was made. This creates a perfect symbiosis of deterministic accuracy and generative creativity.
@@ -47,10 +47,10 @@ To adhere to the rigorous standards of modern enterprise vibe coding, this proje
 
 Building the Autonomous Othello Arena provided several profound insights into production-ready agent deployment:
 
-*   **Quantitative - Token & Latency Efficiency**: By offloading the Othello Minimax calculation to a Python subprocess rather than relying on deep LLM prompting, we drastically reduced the token consumption per turn. The Python subprocess executes a Depth-4 search in ~0.5s with zero token cost, whereas an LLM-based tree search would consume thousands of tokens and take exponentially longer, if it succeeded at all.
-*   **Quantitative - The Perils of Blocking I/O**: During development, we encountered a severe issue where a deep Minimax calculation blocked the entire FastAPI event loop, causing the SSE streams to hang. Transitioning to `asyncio` and reducing the search depth proved that **agent tools must be treated as asynchronous microservices**, lest they stall the orchestrator.
-*   **Qualitative - State Synchronization**: Keeping the generative UI in perfect lockstep with the backend game engine required meticulous state management. By ensuring the Orchestrator was the single source of truth, we eliminated race conditions where an agent might hallucinate a move on a previously occupied square.
-*   **Qualitative - Strict Prompting Against Hallucinations**: We quickly discovered that LLMs tend to diverge off-topic during games (e.g., unexpectedly speaking in Russian or discussing unrelated concepts). By establishing strict "CRITICAL RULES" within the system prompts (forbidding non-English languages and forcing alignment strictly to Othello strategy), we achieved highly disciplined, on-topic commentary streams without sacrificing the agents' energetic personas.
+*   **Quantitative - Token & Latency Efficiency**: By offloading the Othello Minimax calculation to a Python subprocess rather than relying on deep LLM prompting, I drastically reduced the token consumption per turn. The Python subprocess executes a Depth-4 search in ~0.5s with zero token cost, whereas an LLM-based tree search would consume thousands of tokens and take exponentially longer, if it succeeded at all.
+*   **Quantitative - The Perils of Blocking I/O**: During development, I encountered an issue where a deep Minimax calculation blocked the entire FastAPI event loop, causing the SSE streams to hang. Transitioning to `asyncio` and reducing the search depth proved that **agent tools must be treated as asynchronous microservices**, lest they stall the orchestrator.
+*   **Qualitative - State Synchronization**: Keeping the generative UI in perfect lockstep with the backend game engine required meticulous state management. By ensuring the Orchestrator was the single source of truth, I eliminated race conditions where an agent might hallucinate a move on a previously occupied square.
+*   **Qualitative - Strict Prompting Against Hallucinations**: I quickly discovered that LLMs tend to diverge off-topic during games (e.g., unexpectedly speaking in Russian or discussing unrelated concepts). By establishing strict "CRITICAL RULES" within the system prompts (forbidding non-English languages and forcing alignment strictly to Othello strategy), I achieved highly disciplined, on-topic commentary streams without sacrificing the agents' energetic personas.
 
 ---
 
